@@ -1,3 +1,4 @@
-from .main import setup
+from . import main, menus
 
-setup()
+main.setup()
+menus.setup()
