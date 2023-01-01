@@ -13,9 +13,13 @@ from .ajt_common.about_menu import menu_root_entry
 from .config import config
 
 
+def get_fields_text(note: Note) -> str:
+    return '\n'.join(note[field] for field in config.fields if field in note)
+
+
 def copy_content(note: Note):
-    if config.activated and config.field in note:
-        QApplication.clipboard().setText(html_to_text_line(note[config.field]), mode=QClipboard.Mode.Clipboard)
+    if config.activated and (to_copy := get_fields_text(note)):
+        QApplication.clipboard().setText(html_to_text_line(to_copy), mode=QClipboard.Mode.Clipboard)
 
 
 def toggle_activated(self: QAction):

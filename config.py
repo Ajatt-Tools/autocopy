@@ -14,8 +14,8 @@ class AutoCopyConfig(AddonConfigManager):
         self['activated'] = bool(value)
 
     @property
-    def field(self) -> str:
-        return self['field']
+    def fields(self) -> list[str]:
+        return self['fields']
 
 
 config = AutoCopyConfig()
