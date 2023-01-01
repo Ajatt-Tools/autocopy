@@ -1,4 +1,7 @@
 {
   "activated": true,
-  "field": "SentKanji"
+  "field": "SentKanji",
+  "on_show_question": true,
+  "on_show_answer": true,
+  "on_editor_load_note": true
 }

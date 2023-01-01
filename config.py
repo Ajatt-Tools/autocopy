@@ -1,14 +1,21 @@
-from types import SimpleNamespace
+# Copyright: Ren Tatsumoto <tatsu at autistici.org>
+# License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 
-from aqt import mw
-
-
-def get_config() -> dict:
-    return mw.addonManager.getConfig(__name__)
+from .ajt_common.addon_config import AddonConfigManager
 
 
-def write_config():
-    return mw.addonManager.writeConfig(__name__, config.__dict__)
+class AutoCopyConfig(AddonConfigManager):
+    @property
+    def activated(self) -> bool:
+        return self['activated']
+
+    @activated.setter
+    def activated(self, value: bool):
+        self['activated'] = bool(value)
+
+    @property
+    def field(self) -> str:
+        return self['field']
 
 
-config = SimpleNamespace(**get_config())
+config = AutoCopyConfig()
