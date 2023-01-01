@@ -7,12 +7,17 @@ from aqt.utils import saveGeom, restoreGeom
 from .ajt_common.about_menu import tweak_window
 from .config import AutoCopyConfig
 
+ADDON_NAME = "Autocopy"
+TRANSLATE = {
+    "activated": "activate",
+    "on_show_question": "trigger when question is shown",
+    "on_show_answer": "trigger when answer is shown",
+    "on_editor_load_note": "trigger when a note is selected",
+}
+
 
 def as_label(config_key: str) -> str:
-    return config_key.replace('_', ' ').capitalize()
-
-
-ADDON_NAME = "Autocopy"
+    return TRANSLATE.get(config_key, config_key).replace('_', ' ').capitalize()
 
 
 class AutocopySettingsDialog(QDialog):
