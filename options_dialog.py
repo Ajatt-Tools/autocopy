@@ -34,6 +34,7 @@ class FieldList(QWidget):
         self.setLayout(self._create_layout())
         self._connect_buttons()
         self._adjust_widgets()
+        self._add_tooltips()
 
     def _create_layout(self):
         layout = QVBoxLayout()
@@ -76,6 +77,10 @@ class FieldList(QWidget):
             self._field_list.item(idx).text()
             for idx in range(self._field_list.count())
         ]
+
+    def _add_tooltips(self):
+        self._add_button.setToolTip("Add a new field to the list.")
+        self._remove_button.setToolTip("Remove selected field.")
 
 
 class AutocopySettingsDialog(QDialog):
