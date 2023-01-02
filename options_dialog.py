@@ -11,9 +11,10 @@ from .config import AutoCopyConfig
 ADDON_NAME = "Autocopy"
 TRANSLATE = {
     "activated": "activate",
-    "on_show_question": "trigger when question is shown",
-    "on_show_answer": "trigger when answer is shown",
-    "on_editor_load_note": "trigger when a note is selected",
+    "on_show_question": "copy when question is shown",
+    "on_show_answer": "copy when answer is shown",
+    "on_editor_load_note": "copy when Editor loads a note",
+    "on_select_note": "copy when a note is selected",
 }
 
 

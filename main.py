@@ -24,6 +24,15 @@ def on_change(note: Note, state: str):
 
 
 def setup():
-    gui_hooks.reviewer_did_show_question.append(lambda card: on_change(card.note(), "on_show_question"))
-    gui_hooks.reviewer_did_show_answer.append(lambda card: on_change(card.note(), "on_show_answer"))
-    gui_hooks.editor_did_load_note.append(lambda editor: on_change(editor.note, "on_editor_load_note"))
+    gui_hooks.reviewer_did_show_question.append(
+        lambda card: on_change(card.note(), "on_show_question")
+    )
+    gui_hooks.reviewer_did_show_answer.append(
+        lambda card: on_change(card.note(), "on_show_answer")
+    )
+    gui_hooks.browser_did_change_row.append(
+        lambda browser: (browser.current_card and on_change(browser.current_card.note(), "on_select_note"))
+    )
+    gui_hooks.editor_did_load_note.append(
+        lambda editor: on_change(editor.note, "on_editor_load_note")
+    )
