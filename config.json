@@ -2,6 +2,7 @@
     "activated": true,
     "fields": [
         "SentKanji",
+        "VocabKanji",
         "VocabDef"
     ],
     "on_show_question": true,
