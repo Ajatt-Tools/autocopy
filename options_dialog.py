@@ -10,7 +10,7 @@ from .config import AutoCopyConfig
 
 ADDON_NAME = "Autocopy"
 TRANSLATE = {
-    "activated": "activate",
+    "activated": f"activate {ADDON_NAME}",
     "on_show_question": "copy when question is shown",
     "on_show_answer": "copy when answer is shown",
     "on_editor_load_note": "copy when Editor loads a note",
@@ -97,8 +97,8 @@ class AutocopySettingsDialog(QDialog):
         self._checkboxes = {key: QCheckBox(as_label(key)) for key in self._config.bool_keys()}
         self._fields_edit = FieldList()
         self.setLayout(self.make_layout())
-        self.setup_logic()
-        self.set_initial_values()
+        self._setup_logic()
+        self._set_initial_values()
         tweak_window(self)
         restoreGeom(self, self.name)
 
@@ -111,12 +111,12 @@ class AutocopySettingsDialog(QDialog):
         layout.addWidget(self._button_box)
         return layout
 
-    def set_initial_values(self):
+    def _set_initial_values(self):
         for key, checkbox in self._checkboxes.items():
             checkbox.setChecked(self._config[key])
         self._fields_edit.set_fields(self._config.fields)
 
-    def setup_logic(self):
+    def _setup_logic(self):
         qconnect(self._button_box.accepted, self.accept)
         qconnect(self._button_box.rejected, self.reject)
         self._button_box.button(QDialogButtonBox.StandardButton.Ok).setFocus()
