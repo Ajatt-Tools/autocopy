@@ -8,6 +8,8 @@ This add-on can automatically copy text from a card to the clipboard.
 
 **Use cases:**
 
+The add-on is intended to assist in editing large amounts of cards.
+
 * When editing premade or unfinished Anki decks.
 * When using `Yomichan`'s clipboard monitor feature to add definitions to a deck of `subs2srs` cards.
 
@@ -23,3 +25,9 @@ $ git clone 'https://github.com/Ajatt-Tools/autocopy.git' ~/.local/share/Anki2/a
 
 * To configure the add-on, select "AJT" > "Autocopy Options...".
 * To toggle autocopy on and off, select "AJT" > "Activate Autocopy".
+
+## Usage
+
+1) Configure what fields you want to copy.
+2) Configure when to copy the fields.
+3) The content of the fields will be sent to the clipboard under the set conditions.
