@@ -17,5 +17,9 @@ class AutoCopyConfig(AddonConfigManager):
     def fields(self) -> list[str]:
         return self['fields']
 
+    @fields.setter
+    def fields(self, value: list[str]):
+        self['fields'] = value
+
 
 config = AutoCopyConfig()

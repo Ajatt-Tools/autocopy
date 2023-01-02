@@ -122,6 +122,6 @@ class AutocopySettingsDialog(QDialog):
     def accept(self) -> None:
         for key, checkbox in self._checkboxes.items():
             self._config[key] = checkbox.isChecked()
-        self._config['fields'] = self._fields_edit.current_fields()
+        self._config.fields = self._fields_edit.current_fields()
         self._config.write_config()
         return super().accept()
