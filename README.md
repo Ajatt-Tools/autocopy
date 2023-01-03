@@ -32,6 +32,8 @@ $ git clone 'https://github.com/Ajatt-Tools/autocopy.git' ~/.local/share/Anki2/a
 * To configure the add-on, select "AJT" > "Autocopy Options...".
 * To toggle autocopy on and off, select "AJT" > "Activate Autocopy".
 
+<p align="center"><img alt="screenshot" src="https://user-images.githubusercontent.com/69171671/210455938-a84d8bfc-9f87-4608-9c6f-0e52b0fe0da4.png"></p>
+
 ## Usage
 
 1) Configure what fields you want to copy.
