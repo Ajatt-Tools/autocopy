@@ -1,5 +1,11 @@
 # Autocopy for Anki 2.1
 
+![GitHub](https://img.shields.io/github/license/Ajatt-Tools/autocopy)
+[![Rate on AnkiWeb](https://glutanimate.com/logos/ankiweb-rate.svg)](https://ankiweb.net/shared/info/1995103628)
+[![Patreon](https://img.shields.io/badge/donate-black?logo=monero)](https://tatsumoto.neocities.org/blog/donating-to-tatsumoto.html)
+[![Chat](https://img.shields.io/badge/chat-join-0dbd8b?logo=element)](https://tatsumoto.neocities.org/blog/join-our-community.html)
+[![Channel](https://shields.io/badge/channel-subscribe-blue?logo=telegram&color=3faee8)](https://t.me/ajatt_tools)
+
 This add-on can automatically copy text from a card to the clipboard.
 
 * When the card is selected in Browser.
@@ -15,7 +21,7 @@ The add-on is intended to assist in editing large amounts of cards.
 
 ## Installation
 
-Install from [AnkiWeb](https://ankiweb.net/shared/info/TODO), or manually with `git`:
+Install from [AnkiWeb](https://ankiweb.net/shared/info/1995103628), or manually with `git`:
 
 ```
 $ git clone 'https://github.com/Ajatt-Tools/autocopy.git' ~/.local/share/Anki2/addons21/autocopy
