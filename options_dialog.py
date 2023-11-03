@@ -54,8 +54,10 @@ class FieldList(QWidget):
         return layout
 
     def _adjust_widgets(self):
-        self._field_selector.setSizePolicy(QSizePolicy.MinimumExpanding, QSizePolicy.Expanding)  # horizontal, vertical
-        self._field_list.setDragDropMode(QAbstractItemView.InternalMove)
+        self._field_selector.setSizePolicy(
+            QSizePolicy.Policy.MinimumExpanding,
+            QSizePolicy.Policy.Expanding)  # horizontal, vertical
+        self._field_list.setDragDropMode(QAbstractItemView.DragDropMode.InternalMove)
 
     def _connect_buttons(self):
         qconnect(self._add_button.clicked, self._append_field)
