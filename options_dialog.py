@@ -98,13 +98,14 @@ class AutocopySettingsDialog(QDialog):
         )
         self._checkboxes = {key: QCheckBox(as_label(key)) for key in self._config.bool_keys()}
         self._fields_edit = FieldList()
-        self.setLayout(self.make_layout())
+        self.setLayout(self._make_layout())
         self._setup_logic()
         self._set_initial_values()
         tweak_window(self)
         restoreGeom(self, self.name)
+        self._add_tooltips()
 
-    def make_layout(self) -> QLayout:
+    def _make_layout(self) -> QLayout:
         layout = QVBoxLayout()
         layout.addWidget(self._fields_edit)
         for checkbox in self._checkboxes.values():
@@ -122,6 +123,12 @@ class AutocopySettingsDialog(QDialog):
         qconnect(self._button_box.accepted, self.accept)
         qconnect(self._button_box.rejected, self.reject)
         self._button_box.button(QDialogButtonBox.StandardButton.Ok).setFocus()
+
+    def _add_tooltips(self):
+        self._checkboxes["clipboard_monitor"].setToolTip(
+            "Open the Anki Browser with the text in the clipboard\n"
+            "when the clipboard's content changes."
+        )
 
     def done(self, *args, **kwargs) -> None:
         saveGeom(self, self.name)

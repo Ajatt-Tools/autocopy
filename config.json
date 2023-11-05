@@ -1,5 +1,6 @@
 {
     "activated": true,
+    "clipboard_monitor": false,
     "fields": [
         "SentKanji",
         "VocabKanji",

@@ -21,5 +21,9 @@ class AutoCopyConfig(AddonConfigManager):
     def fields(self, value: list[str]):
         self['fields'] = value
 
+    @property
+    def clipboard_monitor(self) -> bool:
+        return self['clipboard_monitor']
+
 
 config = AutoCopyConfig()
