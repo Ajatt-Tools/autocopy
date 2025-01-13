@@ -7,23 +7,23 @@ from .ajt_common.addon_config import AddonConfigManager
 class AutoCopyConfig(AddonConfigManager):
     @property
     def activated(self) -> bool:
-        return self['activated']
+        return self["activated"]
 
     @activated.setter
     def activated(self, value: bool) -> None:
-        self['activated'] = bool(value)
+        self["activated"] = bool(value)
 
     @property
     def fields(self) -> list[str]:
-        return self['fields']
+        return self["fields"]
 
     @fields.setter
     def fields(self, value: list[str]) -> None:
-        self['fields'] = value
+        self["fields"] = value
 
     @property
     def clipboard_monitor(self) -> bool:
-        return self['clipboard_monitor']
+        return self["clipboard_monitor"]
 
 
 config = AutoCopyConfig()

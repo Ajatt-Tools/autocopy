@@ -2,7 +2,7 @@
 # License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 
 from aqt.qt import *
-from aqt.utils import saveGeom, restoreGeom
+from aqt.utils import restoreGeom, saveGeom
 
 from .ajt_common.about_menu import tweak_window
 from .ajt_common.anki_field_selector import AnkiFieldSelector
@@ -19,7 +19,7 @@ TRANSLATE = {
 
 
 def as_label(config_key: str) -> str:
-    return TRANSLATE.get(config_key, config_key).replace('_', ' ').capitalize()
+    return TRANSLATE.get(config_key, config_key).replace("_", " ").capitalize()
 
 
 class FieldList(QWidget):
@@ -55,8 +55,8 @@ class FieldList(QWidget):
 
     def _adjust_widgets(self) -> None:
         self._field_selector.setSizePolicy(
-            QSizePolicy.Policy.MinimumExpanding,
-            QSizePolicy.Policy.Expanding)  # horizontal, vertical
+            QSizePolicy.Policy.MinimumExpanding, QSizePolicy.Policy.Expanding
+        )  # horizontal, vertical
         self._field_list.setDragDropMode(QAbstractItemView.DragDropMode.InternalMove)
 
     def _connect_buttons(self) -> None:
@@ -75,10 +75,7 @@ class FieldList(QWidget):
         self._field_list.addItems(fields)
 
     def current_fields(self) -> list[str]:
-        return [
-            self._field_list.item(idx).text()
-            for idx in range(self._field_list.count())
-        ]
+        return [self._field_list.item(idx).text() for idx in range(self._field_list.count())]
 
     def _add_tooltips(self) -> None:
         self._add_button.setToolTip("Add a new field to the list.")
@@ -93,9 +90,7 @@ class AutocopySettingsDialog(QDialog):
         self.setMinimumSize(320, 320)
         self.setWindowTitle(f"{ADDON_NAME} Settings")
         self._config = config
-        self._button_box = QDialogButtonBox(
-            QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
-        )
+        self._button_box = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
         self._checkboxes = {key: QCheckBox(as_label(key)) for key in self._config.bool_keys()}
         self._fields_edit = FieldList()
         self.setLayout(self._make_layout())
@@ -126,8 +121,7 @@ class AutocopySettingsDialog(QDialog):
 
     def _add_tooltips(self) -> None:
         self._checkboxes["clipboard_monitor"].setToolTip(
-            "Open the Anki Browser with the text in the clipboard\n"
-            "when the clipboard's content changes."
+            "Open the Anki Browser with the text in the clipboard\n" "when the clipboard's content changes."
         )
 
     def done(self, *args, **kwargs) -> None:

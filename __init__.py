@@ -1,4 +1,4 @@
-from . import main, menus, clipboard_monitor
+from . import clipboard_monitor, main, menus
 
 main.setup()
 menus.setup()

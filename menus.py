@@ -6,9 +6,9 @@ from aqt.qt import *
 
 from .ajt_common.about_menu import menu_root_entry
 from .config import config
-from .options_dialog import AutocopySettingsDialog, ADDON_NAME
+from .options_dialog import ADDON_NAME, AutocopySettingsDialog
 
-TOGGLE_ACTION = 'ajt__toggle_autocopy_action'
+TOGGLE_ACTION = "ajt__toggle_autocopy_action"
 
 
 def update_toggle_action() -> None:
