@@ -1,6 +1,8 @@
 # Copyright: Ren Tatsumoto <tatsu at autistici.org>
 # License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
+from typing import Optional
 
+from anki.cards import Card
 from anki.notes import Note
 from anki.utils import html_to_text_line
 from aqt import gui_hooks
@@ -13,14 +15,19 @@ def get_fields_text(note: Note) -> str:
     return "\n".join(note[field] for field in config.fields if field in note)
 
 
+def copy_to_clipboard(text: str) -> None:
+    return QApplication.clipboard().setText(text, mode=QClipboard.Mode.Clipboard)
+
+
 def copy_content(note: Note) -> None:
     if config.activated and (to_copy := get_fields_text(note)):
-        QApplication.clipboard().setText(html_to_text_line(to_copy), mode=QClipboard.Mode.Clipboard)
+        copy_to_clipboard(html_to_text_line(to_copy))
 
 
 def on_change(note: Note, state: str) -> None:
-    if config[state] is True:
-        return copy_content(note)
+    if config[state] is False:
+        return
+    return copy_content(note)
 
 
 def setup() -> None:
