@@ -10,7 +10,7 @@ class AutoCopyConfig(AddonConfigManager):
         return self['activated']
 
     @activated.setter
-    def activated(self, value: bool):
+    def activated(self, value: bool) -> None:
         self['activated'] = bool(value)
 
     @property
@@ -18,7 +18,7 @@ class AutoCopyConfig(AddonConfigManager):
         return self['fields']
 
     @fields.setter
-    def fields(self, value: list[str]):
+    def fields(self, value: list[str]) -> None:
         self['fields'] = value
 
     @property

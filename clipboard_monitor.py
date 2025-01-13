@@ -32,7 +32,7 @@ def on_clipboard_content_changed(mode: QClipboard.Mode) -> None:
             browser.onSearchActivated()
 
 
-def setup():
+def setup() -> None:
     gui_hooks.main_window_did_init.append(lambda: qconnect(
         QApplication.clipboard().changed,
         on_clipboard_content_changed,

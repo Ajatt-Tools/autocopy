@@ -13,17 +13,17 @@ def get_fields_text(note: Note) -> str:
     return '\n'.join(note[field] for field in config.fields if field in note)
 
 
-def copy_content(note: Note):
+def copy_content(note: Note) -> None:
     if config.activated and (to_copy := get_fields_text(note)):
         QApplication.clipboard().setText(html_to_text_line(to_copy), mode=QClipboard.Mode.Clipboard)
 
 
-def on_change(note: Note, state: str):
+def on_change(note: Note, state: str) -> None:
     if config[state] is True:
         return copy_content(note)
 
 
-def setup():
+def setup() -> None:
     gui_hooks.reviewer_did_show_question.append(
         lambda card: on_change(card.note(), "on_show_question")
     )

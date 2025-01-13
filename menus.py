@@ -11,12 +11,12 @@ from .options_dialog import AutocopySettingsDialog, ADDON_NAME
 TOGGLE_ACTION = 'ajt__toggle_autocopy_action'
 
 
-def update_toggle_action():
+def update_toggle_action() -> None:
     toggle_action: QAction = getattr(mw, TOGGLE_ACTION)
     toggle_action.setChecked(config.activated)
 
 
-def on_open_settings():
+def on_open_settings() -> None:
     dialog = AutocopySettingsDialog(config, mw)
     qconnect(dialog.accepted, update_toggle_action)
     dialog.exec()
@@ -28,7 +28,7 @@ def setup_settings_action(parent: QWidget) -> QAction:
     return action_settings
 
 
-def toggle_activated(self: QAction):
+def toggle_activated(self: QAction) -> None:
     config.activated = not config.activated
     self.setChecked(config.activated)
     config.write_config()
@@ -42,7 +42,7 @@ def setup_toggle_action(parent: QWidget) -> QAction:
     return toggle_action
 
 
-def setup():
+def setup() -> None:
     root_menu = menu_root_entry()
     root_menu.addAction(setup_toggle_action(root_menu))
     root_menu.addAction(setup_settings_action(root_menu))

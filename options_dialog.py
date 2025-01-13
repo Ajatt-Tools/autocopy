@@ -25,7 +25,7 @@ def as_label(config_key: str) -> str:
 class FieldList(QWidget):
     """Widget that holds a list of Anki fields and lets the user add, remove and reposition them."""
 
-    def __init__(self, parent: QWidget = None):
+    def __init__(self, parent: QWidget = None) -> None:
         super().__init__(parent)
         self._field_selector = AnkiFieldSelector()
         self._field_list = QListWidget()
@@ -36,7 +36,7 @@ class FieldList(QWidget):
         self._adjust_widgets()
         self._add_tooltips()
 
-    def _create_layout(self):
+    def _create_layout(self) -> None:
         layout = QVBoxLayout()
 
         layout.addLayout(upper := QHBoxLayout())
@@ -53,24 +53,24 @@ class FieldList(QWidget):
 
         return layout
 
-    def _adjust_widgets(self):
+    def _adjust_widgets(self) -> None:
         self._field_selector.setSizePolicy(
             QSizePolicy.Policy.MinimumExpanding,
             QSizePolicy.Policy.Expanding)  # horizontal, vertical
         self._field_list.setDragDropMode(QAbstractItemView.DragDropMode.InternalMove)
 
-    def _connect_buttons(self):
+    def _connect_buttons(self) -> None:
         qconnect(self._add_button.clicked, self._append_field)
         qconnect(self._remove_button.clicked, self._remove_current)
 
-    def _append_field(self):
+    def _append_field(self) -> None:
         self._field_list.addItem(self._field_selector.currentText())
 
-    def _remove_current(self):
+    def _remove_current(self) -> None:
         if (current := self._field_list.currentItem()) and current.isSelected():
             self._field_list.takeItem(self._field_list.currentRow())
 
-    def set_fields(self, fields: list[str]):
+    def set_fields(self, fields: list[str]) -> None:
         self._field_list.clear()
         self._field_list.addItems(fields)
 
@@ -80,7 +80,7 @@ class FieldList(QWidget):
             for idx in range(self._field_list.count())
         ]
 
-    def _add_tooltips(self):
+    def _add_tooltips(self) -> None:
         self._add_button.setToolTip("Add a new field to the list.")
         self._remove_button.setToolTip("Remove selected field.")
 
@@ -88,7 +88,7 @@ class FieldList(QWidget):
 class AutocopySettingsDialog(QDialog):
     name = "ajt__autocopy_settings_dialog"
 
-    def __init__(self, config: AutoCopyConfig, parent: QWidget = None):
+    def __init__(self, config: AutoCopyConfig, parent: QWidget = None) -> None:
         super().__init__(parent)
         self.setMinimumSize(320, 320)
         self.setWindowTitle(f"{ADDON_NAME} Settings")
@@ -114,17 +114,17 @@ class AutocopySettingsDialog(QDialog):
         layout.addWidget(self._button_box)
         return layout
 
-    def _set_initial_values(self):
+    def _set_initial_values(self) -> None:
         for key, checkbox in self._checkboxes.items():
             checkbox.setChecked(self._config[key])
         self._fields_edit.set_fields(self._config.fields)
 
-    def _setup_logic(self):
+    def _setup_logic(self) -> None:
         qconnect(self._button_box.accepted, self.accept)
         qconnect(self._button_box.rejected, self.reject)
         self._button_box.button(QDialogButtonBox.StandardButton.Ok).setFocus()
 
-    def _add_tooltips(self):
+    def _add_tooltips(self) -> None:
         self._checkboxes["clipboard_monitor"].setToolTip(
             "Open the Anki Browser with the text in the clipboard\n"
             "when the clipboard's content changes."
