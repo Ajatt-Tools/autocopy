@@ -10,7 +10,7 @@ readonly addon_name root_dir output
 cd -- "$root_dir" || exit 1
 rm -- "$output" 2>/dev/null || true
 
-"$root_dir/ajt_common/package.sh" \
+"$root_dir/autocopy/ajt_common/package.sh" \
 	--package "AJT ${addon_name^}" \
 	--name "AJT ${addon_name^}" \
 	--zip_name "$output" \
