@@ -1,6 +1,7 @@
-/.idea
-/trash.py
-/manifest.json
-/meta.json
-/*.ankiaddon
+.idea
+.vscode
+manifest.json
+meta.json
+*.ankiaddon
 __pycache__
+*TODO*
