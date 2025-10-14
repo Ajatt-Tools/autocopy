@@ -14,7 +14,7 @@ rm -- "$output" 2>/dev/null || true
 	--package "AJT ${addon_name^}" \
 	--name "AJT ${addon_name^}" \
 	--zip_name "$output" \
-	--root "" \
+	--root "autocopy" \
 	"$@"
 
 if ! [[ -f $output ]]; then
