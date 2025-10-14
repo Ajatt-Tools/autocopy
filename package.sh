@@ -2,20 +2,22 @@
 
 set -euo pipefail
 
-readonly addon_name=autocopy
-readonly root_dir=$(git rev-parse --show-toplevel)
-readonly branch=$(git branch --show-current)
-readonly zip_name=${addon_name}_${branch}.ankiaddon
+addon_name=autocopy
+root_dir=$(git rev-parse --show-toplevel)
+output=${addon_name}.ankiaddon
+readonly addon_name root_dir output
 
 cd -- "$root_dir" || exit 1
-rm -- "$zip_name" 2>/dev/null || true
+rm -- "$output" 2>/dev/null || true
 
-export root_dir branch
+"$root_dir/ajt_common/package.sh" \
+	--package "AJT ${addon_name^}" \
+	--name "AJT ${addon_name^}" \
+	--zip_name "$output" \
+	--root "" \
+	"$@"
 
-git archive "$branch" --format=zip --output "$zip_name"
-
-# package ajt common
-(cd -- ajt_common && git archive HEAD --prefix="${PWD##*/}/" --format=zip -o "$root_dir/${PWD##*/}.zip")
-
-zipmerge "$zip_name" ./*.zip
-rm -- ./*.zip
+if ! [[ -f $output ]]; then
+	echo "Missing file: $output"
+	exit 1
+fi
