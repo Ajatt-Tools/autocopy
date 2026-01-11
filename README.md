@@ -23,8 +23,9 @@ The add-on is intended to assist in editing large amounts of cards.
 
 Install from [AnkiWeb](https://ankiweb.net/shared/info/1995103628), or manually with `git`:
 
-```
-$ git clone 'https://github.com/Ajatt-Tools/autocopy.git' ~/.local/share/Anki2/addons21/autocopy
+```bash
+git clone 'https://github.com/Ajatt-Tools/autocopy.git'
+ln -sr autocopy/autocopy ~/.local/share/Anki2/addons21/autocopy
 ```
 
 ## Configuration
