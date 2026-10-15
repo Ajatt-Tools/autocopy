@@ -2,7 +2,6 @@
 # License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 
 from anki.notes import Note
-from anki.utils import html_to_text_line
 from aqt import gui_hooks
 from aqt.editor import Editor
 from aqt.qt import *
@@ -11,7 +10,16 @@ from .config import config
 
 
 def get_fields_text(note: Note) -> str:
-    return "\n".join(note[field] for field in config.fields if field in note)
+    def to_text(html: str) -> str:
+        doc = QTextDocument()
+        doc.setHtml(html)
+        return doc.toPlainText()
+
+    return "\n".join(
+        to_text(note[field])
+        for field in config.fields
+        if field in note
+    )
 
 
 def copy_to_clipboard(text: str) -> None:
@@ -20,7 +28,7 @@ def copy_to_clipboard(text: str) -> None:
 
 def copy_content(note: Note) -> None:
     if config.activated and (to_copy := get_fields_text(note)):
-        copy_to_clipboard(html_to_text_line(to_copy))
+        copy_to_clipboard(to_copy)
 
 
 def on_change(note: Note, state: str) -> None:
