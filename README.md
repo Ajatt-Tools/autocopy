@@ -42,6 +42,11 @@ ln -sr autocopy/autocopy ~/.local/share/Anki2/addons21/autocopy
 2) Configure when to copy the fields.
 3) The content of the fields will be sent to the clipboard under the set conditions.
 
+Copied text preserves HTML line breaks and paragraph boundaries.
+Configured fields are separated by newlines in their configured order.
+Formatting, images, and Anki `[sound:...]` references are omitted from the plain text.
+If no non-whitespace text remains, the clipboard is left unchanged.
+
 ## Development
 
 Run tests with `hatch test` or run the complete suite with coverage using `hatch test --cover`.

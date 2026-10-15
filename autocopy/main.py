@@ -4,8 +4,8 @@
 from collections.abc import Sequence
 
 from anki.cards import Card
+from anki.media import MediaManager
 from anki.notes import Note
-from anki.utils import html_to_text_line
 from aqt import gui_hooks, mw
 from aqt.browser import Browser
 from aqt.editor import Editor
@@ -20,9 +20,18 @@ except ImportError:
 from .config import AutoCopyConfig, get_global_config
 
 
+def html_to_clipboard_text(html: str, *, media: MediaManager) -> str:
+    """Remove Anki media and convert HTML to plain text, retaining rendered line breaks."""
+    # Qt preserves rendered line breaks that Anki's single-line converter flattens.
+    document = QTextDocument()
+    # Strip sound references and image markup before parsing HTML or decoding escaped literal text.
+    document.setHtml(media.strip(html))
+    return document.toPlainText()
+
+
 def get_fields_text(note: Note, fields: Sequence[str]) -> str:
-    """Join existing fields in the configured order without converting their HTML."""
-    return "\n".join(note[field] for field in fields if field in note)
+    """Remove field media and join plain text in order, preserving HTML line breaks."""
+    return "\n".join(html_to_clipboard_text(note[field], media=note.col.media) for field in fields if field in note)
 
 
 def copy_to_clipboard(text: str) -> None:
@@ -54,9 +63,12 @@ class AutoCopy:
         self._cfg = cfg
 
     def copy_content(self, note: Note) -> None:
-        """Copy configured fields using the existing single-line conversion."""
-        if self._cfg.activated and (to_copy := get_fields_text(note, self._cfg.fields)):
-            copy_to_clipboard(html_to_text_line(to_copy))
+        """Copy nonblank field text without flattening its line breaks."""
+        if not self._cfg.activated:
+            return
+        # Empty or media-only fields can leave separators. Do not overwrite useful clipboard text with them.
+        if (to_copy := get_fields_text(note, self._cfg.fields)).strip():
+            copy_to_clipboard(to_copy)
 
     def on_change(self, note: Note, state: str) -> None:
         """Copy a note only when the triggering event is enabled."""

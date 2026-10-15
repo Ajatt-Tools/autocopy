@@ -24,12 +24,12 @@ class TestFields:
     @pytest.mark.parametrize(
         ("fields", "expected"),
         [
-            (("Front", "Back"), "<b>front</b>\nback"),
-            (("Back", "Front"), "back\n<b>front</b>"),
-            (("Missing", "Front"), "<b>front</b>"),
+            (("Front", "Back"), "front\nback"),
+            (("Back", "Front"), "back\nfront"),
+            (("Missing", "Front"), "front"),
             (("Missing",), ""),
             ((), ""),
-            (("Front", "Front"), "<b>front</b>\n<b>front</b>"),
+            (("Front", "Front"), "front\nfront"),
         ],
     )
     def test_selection(self, anki_collection: Collection, fields: Sequence[str], expected: str) -> None:
@@ -37,13 +37,64 @@ class TestFields:
         note = make_note(anki_collection, front="<b>front</b>")
         assert main.get_fields_text(note, fields) == expected
 
+    @pytest.mark.parametrize(
+        ("front", "back", "expected"),
+        [
+            ("one<br>two", "<p>three</p><p>four</p>", "one\ntwo\nthree\nfour"),
+            ("<b>one", "two</b>", "one\ntwo"),
+            ("", "back", "\nback"),
+            ("front", "", "front\n"),
+            ('<img src="one.jpg">', '<img src="two.jpg">', "\n"),
+            ("", "", "\n"),
+        ],
+    )
+    def test_field_boundaries(self, anki_collection: Collection, front: str, back: str, expected: str) -> None:
+        """Convert fields independently and retain separators even when individual fields are empty."""
+        note = make_note(anki_collection, front=front, back=back)
+        assert main.get_fields_text(note, ("Front", "Back")) == expected
+
+    @pytest.mark.parametrize(
+        ("html", "expected"),
+        [
+            ('<img src="picture.jpg">', ""),
+            ('before<img src="picture.jpg">after', "beforeafter"),
+            ('<img src="one.jpg"><br><img src="two.jpg">', "\n"),
+            ("[sound:audio.mp3]", ""),
+            ("[sound:one.mp3][sound:two.ogg]", ""),
+            ("日本語[sound:audio.mp3]<br>text", "日本語\ntext"),
+            ('<img src="picture.jpg">[sound:audio.mp3]', ""),
+            ('one[sound:audio.mp3]<br><img src="picture.jpg">two', "one\ntwo"),
+            ("[sound:日本語 音声.mp3]", ""),
+            ("literal \ufffc character", "literal \ufffc character"),
+            ("&lt;img src=x&gt;", "<img src=x>"),
+            ("&#91;sound:audio.mp3&#93;", "[sound:audio.mp3]"),
+        ],
+    )
+    def test_media_cleanup(self, anki_collection: Collection, html: str, expected: str) -> None:
+        """Use the note's real media manager without reparsing escaped text as media references."""
+        note = make_note(anki_collection, front=html)
+        assert main.get_fields_text(note, ("Front",)) == expected
+
 
 class TestCopyContent:
-    """Preserve main-branch single-line copying while configuration becomes injected."""
+    """Preserve multiline text and avoid replacing clipboard contents with blank output."""
 
     @pytest.mark.parametrize(
         ("activated", "front", "expected"),
-        [(True, "<b>日本語</b>", "日本語"), (True, "", None), (False, "text", None)],
+        [
+            (True, "<b>日本語</b>", "日本語"),
+            (True, "one<br>two", "one\ntwo"),
+            (True, "one<br>", "one\n"),
+            (True, "A &amp;amp; B", "A &amp; B"),
+            (True, "", None),
+            (True, "<b></b>", None),
+            (True, '<img src="picture.jpg">', None),
+            (True, "[sound:audio.mp3]", None),
+            (True, "one[sound:audio.mp3]<br>two", "one\ntwo"),
+            (True, "<br><br>", None),
+            (True, "&nbsp;", None),
+            (False, "text", None),
+        ],
     )
     def test_copy(
         self,
@@ -53,7 +104,7 @@ class TestCopyContent:
         front: str,
         expected: str | None,
     ) -> None:
-        """Copy real Anki conversion output only when enabled and raw content exists."""
+        """Copy real Qt conversion output only when enabled and meaningful text exists."""
         no_anki_config.activated = activated
         no_anki_config.fields = ["Front"]
         controller = main.AutoCopy(no_anki_config)
@@ -64,6 +115,39 @@ class TestCopyContent:
             copy.assert_not_called()
         else:
             copy.assert_called_once_with(expected)
+
+    @pytest.mark.parametrize(
+        ("front", "back", "expected"),
+        [
+            ("one<br>two", "three<br>four", "one\ntwo\nthree\nfour"),
+            ("", "", "keep this text"),
+            ('<img src="one.jpg">', '<img src="two.jpg">', "keep this text"),
+            ("[sound:one.mp3]", "[sound:two.ogg]", "keep this text"),
+            ('<img src="one.jpg">', "[sound:two.ogg]", "keep this text"),
+            ("one[sound:one.mp3]<br>two", "[sound:two.ogg]three", "one\ntwo\nthree"),
+            ("<br><br>", "&nbsp;", "keep this text"),
+            ('<img src="one.jpg">', "back", "\nback"),
+            ("front", '<img src="two.jpg">', "front\n"),
+        ],
+    )
+    def test_multifield_clipboard(
+        self,
+        qapp: QApplication,
+        isolated_clipboard: None,
+        no_anki_config: AutoCopyConfig,
+        anki_collection: Collection,
+        front: str,
+        back: str,
+        expected: str,
+    ) -> None:
+        """Keep existing clipboard text after blank conversion and retain meaningful field boundaries."""
+        no_anki_config.activated = True
+        no_anki_config.fields = ["Front", "Back"]
+        clipboard = qapp.clipboard()
+        assert clipboard is not None
+        clipboard.setText("keep this text")
+        main.AutoCopy(no_anki_config).copy_content(make_note(anki_collection, front=front, back=back))
+        assert clipboard.text() == expected
 
     @pytest.mark.parametrize("enabled", [True, False])
     def test_event_gate(self, no_anki_config: AutoCopyConfig, anki_collection: Collection, enabled: bool) -> None:
