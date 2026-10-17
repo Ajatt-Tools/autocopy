@@ -11,3 +11,5 @@ htmlcov/
 .pytest_cache/
 dist/
 *.egg-info/
+/*.md
+!/README.md
