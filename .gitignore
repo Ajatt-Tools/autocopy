@@ -4,6 +4,7 @@ manifest.json
 meta.json
 *.ankiaddon
 __pycache__
+__about__.py
 *TODO*
 .coverage*
 coverage.xml
