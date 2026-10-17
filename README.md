@@ -40,3 +40,9 @@ ln -sr autocopy/autocopy ~/.local/share/Anki2/addons21/autocopy
 1) Configure what fields you want to copy.
 2) Configure when to copy the fields.
 3) The content of the fields will be sent to the clipboard under the set conditions.
+
+## Development
+
+Run tests with `hatch test` or run the complete suite with coverage using `hatch test --cover`.
+For a focused run, use `hatch test tests/test_main.py`.
+Format code with `hatch fmt -f` and check shell scripts with `shellcheck scripts/*.sh`.
