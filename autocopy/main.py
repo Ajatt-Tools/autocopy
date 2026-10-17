@@ -67,8 +67,12 @@ class AutoCopy:
         if note := get_editor_note(editor):
             self.on_change(note, "on_editor_load_note")
 
+    def on_show_question(self, card: Card) -> None:
+        """Handle the reviewer showing a question."""
+        self.on_change(card.note(), "on_show_question")
+
     def setup(self) -> None:
-        gui_hooks.reviewer_did_show_question.append(lambda card: self.on_change(card.note(), "on_show_question"))
+        gui_hooks.reviewer_did_show_question.append(lambda card: self.on_show_question(card))
         gui_hooks.reviewer_did_show_answer.append(lambda card: self.on_change(card.note(), "on_show_answer"))
         gui_hooks.browser_did_change_row.append(
             lambda browser: (browser.current_card and self.on_change(browser.current_card.note(), "on_select_note"))
