@@ -38,13 +38,12 @@ class ClipboardMonitor:
             else:
                 browser.onSearchActivated()
 
+    def connect_clipboard(self) -> None:
+        """Connect after the main window has initialized the application clipboard."""
+        qconnect(QApplication.clipboard().changed, self.on_clipboard_content_changed)
+
     def setup(self) -> None:
-        gui_hooks.main_window_did_init.append(
-            lambda: qconnect(
-                QApplication.clipboard().changed,
-                self.on_clipboard_content_changed,
-            )
-        )
+        gui_hooks.main_window_did_init.append(self.connect_clipboard)
 
 
 def init() -> None:
