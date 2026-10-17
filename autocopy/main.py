@@ -75,12 +75,15 @@ class AutoCopy:
         """Handle the reviewer showing an answer."""
         self.on_change(card.note(), "on_show_answer")
 
+    def on_select_note(self, browser: Browser) -> None:
+        """Copy the selected Browser card when one exists."""
+        if card := browser.current_card:
+            self.on_change(card.note(), "on_select_note")
+
     def setup(self) -> None:
         gui_hooks.reviewer_did_show_question.append(lambda card: self.on_show_question(card))
         gui_hooks.reviewer_did_show_answer.append(lambda card: self.on_show_answer(card))
-        gui_hooks.browser_did_change_row.append(
-            lambda browser: (browser.current_card and self.on_change(browser.current_card.note(), "on_select_note"))
-        )
+        gui_hooks.browser_did_change_row.append(lambda browser: self.on_select_note(browser))
         gui_hooks.editor_did_load_note.append(self.on_editor_load_note)
 
 
