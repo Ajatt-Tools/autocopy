@@ -26,8 +26,12 @@ class ClipboardMonitor:
         self._cfg = cfg
 
     def on_clipboard_content_changed(self, mode: QClipboard.Mode) -> None:
+        """Search clipboard text when monitoring is enabled and Anki is inactive."""
         if self._cfg.clipboard_monitor and mode == QClipboard.Mode.Clipboard and not is_anki_active():
-            clipboard_text = QApplication.clipboard().text()
+            clipboard = QApplication.clipboard()
+            if clipboard is None:
+                return
+            clipboard_text = clipboard.text()
             if clipboard_text.startswith("file://"):
                 return
             browser = aqt.dialogs.open("Browser", aqt.mw)
@@ -40,9 +44,14 @@ class ClipboardMonitor:
 
     def connect_clipboard(self) -> None:
         """Connect after the main window has initialized the application clipboard."""
-        qconnect(QApplication.clipboard().changed, self.on_clipboard_content_changed)
+        clipboard = QApplication.clipboard()
+        if clipboard is None:
+            return
+        # The closure retains this non-QObject controller after the startup hook returns.
+        qconnect(clipboard.changed, lambda mode: self.on_clipboard_content_changed(mode))
 
     def setup(self) -> None:
+        """Retain the monitor through Anki's main-window initialization hook."""
         gui_hooks.main_window_did_init.append(self.connect_clipboard)
 
 
