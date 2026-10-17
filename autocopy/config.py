@@ -1,6 +1,8 @@
 # Copyright: Ren Tatsumoto <tatsu at autistici.org>
 # License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 
+import functools
+
 from .ajt_common.addon_config import AddonConfigManager
 
 
@@ -26,4 +28,8 @@ class AutoCopyConfig(AddonConfigManager):
         return self["clipboard_monitor"]
 
 
-config = AutoCopyConfig()
+@functools.cache
+def get_global_config() -> AutoCopyConfig:
+    """Return the shared configuration, initializing it on first use in Anki."""
+    # Delay access to Anki's add-on manager until a caller actually needs configuration.
+    return AutoCopyConfig()
