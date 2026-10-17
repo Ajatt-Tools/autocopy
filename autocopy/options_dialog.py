@@ -121,7 +121,7 @@ class AutocopySettingsDialog(QDialog):
 
     def _add_tooltips(self) -> None:
         self._checkboxes["clipboard_monitor"].setToolTip(
-            "Open the Anki Browser with the text in the clipboard\n" "when the clipboard's content changes."
+            "Open the Anki Browser with the text in the clipboard\nwhen the clipboard's content changes."
         )
 
     def done(self, *args, **kwargs) -> None:
