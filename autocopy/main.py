@@ -71,9 +71,13 @@ class AutoCopy:
         """Handle the reviewer showing a question."""
         self.on_change(card.note(), "on_show_question")
 
+    def on_show_answer(self, card: Card) -> None:
+        """Handle the reviewer showing an answer."""
+        self.on_change(card.note(), "on_show_answer")
+
     def setup(self) -> None:
         gui_hooks.reviewer_did_show_question.append(lambda card: self.on_show_question(card))
-        gui_hooks.reviewer_did_show_answer.append(lambda card: self.on_change(card.note(), "on_show_answer"))
+        gui_hooks.reviewer_did_show_answer.append(lambda card: self.on_show_answer(card))
         gui_hooks.browser_did_change_row.append(
             lambda browser: (browser.current_card and self.on_change(browser.current_card.note(), "on_select_note"))
         )
