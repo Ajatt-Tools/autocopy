@@ -5,3 +5,9 @@ meta.json
 *.ankiaddon
 __pycache__
 *TODO*
+.coverage*
+coverage.xml
+htmlcov/
+.pytest_cache/
+dist/
+*.egg-info/
