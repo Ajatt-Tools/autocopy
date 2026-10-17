@@ -1,7 +1,6 @@
 # Copyright: Ren Tatsumoto <tatsu at autistici.org>
 # License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 
-
 from collections.abc import Sequence
 
 from anki.cards import Card
@@ -16,6 +15,7 @@ from .config import AutoCopyConfig, get_global_config
 
 
 def get_fields_text(note: Note, fields: Sequence[str]) -> str:
+    """Join existing fields in the configured order without converting their HTML."""
     return "\n".join(note[field] for field in fields if field in note)
 
 
@@ -48,20 +48,19 @@ class AutoCopy:
         self._cfg = cfg
 
     def copy_content(self, note: Note) -> None:
+        """Copy configured fields using the existing single-line conversion."""
         if self._cfg.activated and (to_copy := get_fields_text(note, self._cfg.fields)):
             copy_to_clipboard(html_to_text_line(to_copy))
 
     def on_change(self, note: Note, state: str) -> None:
+        """Copy a note only when the triggering event is enabled."""
         if self._cfg[state] is False:
             return
         self.copy_content(note)
 
     def on_editor_load_note(self, editor: Editor) -> None:
-        """Copy configured fields when a note finishes loading in the editor.
-
-        The config flag is checked before the note is resolved so that no database
-        lookup happens when the feature is disabled.
-        """
+        """Copy the editor note, avoiding a database lookup when the event is disabled."""
+        # Resolve the note only after checking the flag, especially for Anki's NewEditor.
         if self._cfg["on_editor_load_note"] is False:
             return
         if note := get_editor_note(editor):
@@ -81,6 +80,7 @@ class AutoCopy:
             self.on_change(card.note(), "on_select_note")
 
     def setup(self) -> None:
+        """Register copying callbacks on Anki's event hooks."""
         gui_hooks.reviewer_did_show_question.append(lambda card: self.on_show_question(card))
         gui_hooks.reviewer_did_show_answer.append(lambda card: self.on_show_answer(card))
         gui_hooks.browser_did_change_row.append(lambda browser: self.on_select_note(browser))
