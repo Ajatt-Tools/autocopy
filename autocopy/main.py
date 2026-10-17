@@ -20,7 +20,9 @@ def get_fields_text(note: Note, fields: Sequence[str]) -> str:
 
 
 def copy_to_clipboard(text: str) -> None:
-    return QApplication.clipboard().setText(text, mode=QClipboard.Mode.Clipboard)
+    """Write text to the system clipboard."""
+    if clipboard := QApplication.clipboard():
+        clipboard.setText(text, mode=QClipboard.Mode.Clipboard)
 
 
 def get_editor_note(editor: Editor) -> Note | None:
