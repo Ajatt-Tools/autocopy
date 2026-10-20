@@ -55,6 +55,6 @@ class AutoCopyMenus:
 def init() -> None:
     """Create menu actions sharing the session configuration."""
     assert mw, "Anki should be open."
-    # Qt does not retain plain Python receivers. Keep the menu controller on the main window.
-    mw._ajt__autocopy_menus = controller = AutoCopyMenus(get_global_config(), root_menu=menu_root_entry())
+    controller = AutoCopyMenus(get_global_config(), root_menu=menu_root_entry())
+    setattr(mw, "_ajt__autocopy_menus", controller)
     controller.setup()

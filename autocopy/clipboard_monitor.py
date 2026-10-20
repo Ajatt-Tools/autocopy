@@ -58,6 +58,6 @@ class ClipboardMonitor:
 def init() -> None:
     """Create the session clipboard monitor and register its initialization hook."""
     assert aqt.mw, "Anki should be open."
-    # Keep explicit main-window ownership in addition to the signal closure's capture.
-    aqt.mw._ajt__autocopy_clipboard_monitor = controller = ClipboardMonitor(get_global_config())
+    controller = ClipboardMonitor(get_global_config())
+    setattr(aqt.mw, "_ajt__autocopy_clipboard_monitor", controller)
     controller.setup()

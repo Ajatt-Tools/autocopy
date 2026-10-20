@@ -90,6 +90,6 @@ class AutoCopy:
 def init() -> None:
     """Create the session copying controller and register its callbacks."""
     assert mw, "Anki should be open."
-    # The main window owns session controllers, matching the other AJT add-ons.
-    mw._ajt__autocopy_events = controller = AutoCopy(get_global_config())
+    controller = AutoCopy(get_global_config())
+    setattr(mw, "_ajt__autocopy_events", controller)
     controller.setup()
