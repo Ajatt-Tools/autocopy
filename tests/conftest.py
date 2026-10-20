@@ -1,0 +1,82 @@
+# Copyright: Ajatt-Tools and contributors; https://github.com/Ajatt-Tools
+# License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
+
+import os
+import pathlib
+from collections.abc import Iterator
+
+import anki.lang
+import pytest
+from anki.collection import Collection
+from aqt.qt import QApplication
+from beartype import beartype
+
+from autocopy import config
+from playground.no_anki_config import NoAnkiConfigView
+
+
+def pytest_collection_modifyitems(items: list[pytest.Item]) -> None:
+    """Runtime-check the arguments and return values of collected test functions."""
+    for item in items:
+        if isinstance(item, pytest.Function):
+            item.obj = beartype(item.obj)
+
+
+@pytest.fixture(scope="session", autouse=True)
+def qt_offscreen_platform() -> None:
+    """Force Qt to run without a real display so widget tests work in headless CI."""
+    os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+
+
+@pytest.fixture(scope="session", autouse=True)
+def qapp(qt_offscreen_platform: None) -> QApplication:
+    """Ensure a QApplication exists for widget tests.
+
+    A program name must be present in argv because QtWebEngine aborts
+    when QApplication is created with an empty argument list.
+    """
+    match instance := QApplication.instance():
+        case None:
+            return QApplication(["pytest"])
+        case QApplication():
+            return instance
+        case _:
+            raise RuntimeError("A QCoreApplication already exists. Widget tests require QApplication")
+
+
+@pytest.fixture
+def anki_collection(tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch) -> Iterator[Collection]:
+    """Open an isolated Anki collection with its own text-processing backend."""
+    collection = Collection(str(tmp_path / "collection.anki2"))
+    # Anki's HTML helpers use this backend outside the full application too.
+    monkeypatch.setattr(anki.lang, "current_i18n", collection._backend)
+    try:
+        yield collection
+    finally:
+        collection.close()
+
+
+@pytest.fixture(autouse=True)
+def clear_config_cache() -> Iterator[None]:
+    """Keep cached session configuration from leaking between tests."""
+    config.get_global_config.cache_clear()
+    yield
+    config.get_global_config.cache_clear()
+
+
+@pytest.fixture
+def no_anki_config() -> NoAnkiConfigView:
+    """Provide fresh standalone configuration, as in AJT_Media_Converter."""
+    return NoAnkiConfigView()
+
+
+@pytest.fixture
+def isolated_clipboard(qapp: QApplication) -> Iterator[None]:
+    """Restore clipboard text after tests that interact with the real Qt clipboard."""
+    clipboard = qapp.clipboard()
+    assert clipboard is not None, "A QApplication clipboard must be available."
+    previous_text = clipboard.text()
+    try:
+        yield
+    finally:
+        clipboard.setText(previous_text)
