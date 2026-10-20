@@ -11,8 +11,6 @@ from .ajt_common.about_menu import menu_root_entry
 from .config import AutoCopyConfig, get_global_config
 from .options_dialog import ADDON_NAME, AutocopySettingsDialog
 
-TOGGLE_ACTION = "ajt__toggle_autocopy_action"
-
 
 class AutoCopyMenus:
     """Own Autocopy menu actions and their injected session configuration."""
@@ -21,10 +19,18 @@ class AutoCopyMenus:
         """Create the toggle action within the supplied AJT menu."""
         self._cfg = cfg
         self._root_menu = root_menu
+        self._toggle_action = QAction(_(f"Activate {ADDON_NAME}"), root_menu)
+        self._toggle_action.setCheckable(True)
+        self._setup_toggle_action()
+
+    def _setup_toggle_action(self) -> None:
+        self._update_toggle_action()
+        # Qt does not retain plain Python bound-method receivers. Capture the owner explicitly
+        # as a second lifetime safeguard alongside the main window's controller reference.
+        qconnect(self._toggle_action.triggered, lambda: self._toggle_activated())
 
     def _update_toggle_action(self) -> None:
-        toggle_action: QAction = getattr(mw, TOGGLE_ACTION)
-        toggle_action.setChecked(self._cfg.activated)
+        self._toggle_action.setChecked(self._cfg.activated)
 
     def _on_open_settings(self) -> None:
         dialog = AutocopySettingsDialog(self._cfg, mw)
@@ -36,20 +42,13 @@ class AutoCopyMenus:
         qconnect(action_settings.triggered, self._on_open_settings)
         return action_settings
 
-    def _toggle_activated(self, action: QAction) -> None:
+    def _toggle_activated(self) -> None:
         self._cfg.activated = not self._cfg.activated
-        action.setChecked(self._cfg.activated)
+        self._update_toggle_action()
         self._cfg.write_config()
 
-    def _setup_toggle_action(self, parent: QWidget) -> QAction:
-        setattr(mw, TOGGLE_ACTION, toggle_action := QAction(_(f"Activate {ADDON_NAME}"), parent))
-        toggle_action.setCheckable(True)
-        toggle_action.setChecked(self._cfg.activated)
-        qconnect(toggle_action.triggered, functools.partial(self._toggle_activated, self=toggle_action))
-        return toggle_action
-
     def setup(self) -> None:
-        self._root_menu.addAction(self._setup_toggle_action(self._root_menu))
+        self._root_menu.addAction(self._toggle_action)
         self._root_menu.addAction(self._setup_settings_action(self._root_menu))
 
 
