@@ -11,6 +11,12 @@ from aqt.browser import Browser
 from aqt.editor import Editor
 from aqt.qt import *
 
+try:
+    from aqt.editor import NewEditor
+except ImportError:
+    # Older Anki releases expose only Editor. Keep annotations valid without weakening runtime checks.
+    from aqt.editor import Editor as NewEditor  # type: ignore[assignment]
+
 from .config import AutoCopyConfig, get_global_config
 
 
@@ -25,7 +31,7 @@ def copy_to_clipboard(text: str) -> None:
         clipboard.setText(text, mode=QClipboard.Mode.Clipboard)
 
 
-def get_editor_note(editor: Editor) -> Note | None:
+def get_editor_note(editor: Editor | NewEditor) -> Note | None:
     """Return the Note currently loaded in the editor, or None.
 
     Supports the legacy Editor (editor.note) and the NewEditor introduced in
@@ -58,7 +64,7 @@ class AutoCopy:
             return
         self.copy_content(note)
 
-    def on_editor_load_note(self, editor: Editor) -> None:
+    def on_editor_load_note(self, editor: Editor | NewEditor) -> None:
         """Copy the editor note, avoiding a database lookup when the event is disabled."""
         # Resolve the note only after checking the flag, especially for Anki's NewEditor.
         if self._cfg["on_editor_load_note"] is False:
