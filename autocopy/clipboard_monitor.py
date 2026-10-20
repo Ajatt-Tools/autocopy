@@ -2,14 +2,14 @@
 # License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 
 import aqt
-from aqt import gui_hooks
+from aqt import gui_hooks, mw
 from aqt.qt import *
 
 from .config import AutoCopyConfig, get_global_config
 
 
 def is_anki_active() -> bool:
-    if aqt.mw.isActiveWindow():
+    if mw.isActiveWindow():
         return True
     # noinspection PyProtectedMember
     for _, window in aqt.dialogs._dialogs.values():
@@ -34,7 +34,7 @@ class ClipboardMonitor:
             clipboard_text = clipboard.text()
             if clipboard_text.startswith("file://"):
                 return
-            browser = aqt.dialogs.open("Browser", aqt.mw)
+            browser = aqt.dialogs.open("Browser", mw)
             browser.activateWindow()
             browser.form.searchEdit.lineEdit().setText(clipboard_text)
             if hasattr(browser, "onSearch"):
@@ -57,7 +57,7 @@ class ClipboardMonitor:
 
 def init() -> None:
     """Create the session clipboard monitor and register its initialization hook."""
-    assert aqt.mw, "Anki should be open."
+    assert mw, "Anki should be open."
     controller = ClipboardMonitor(get_global_config())
-    setattr(aqt.mw, "_ajt__autocopy_clipboard_monitor", controller)
+    setattr(mw, "_ajt__autocopy_clipboard_monitor", controller)
     controller.setup()
