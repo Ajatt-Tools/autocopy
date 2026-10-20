@@ -24,6 +24,7 @@ class AutoCopyMenus:
         self._setup_settings_action()
 
     def _setup_toggle_action(self) -> None:
+        """Initialize toggle state and retain its receiver through an explicit capture."""
         self._toggle_action.setCheckable(True)
         self._update_toggle_action()
         # Qt does not retain plain Python bound-method receivers. Capture the owner explicitly
@@ -31,23 +32,29 @@ class AutoCopyMenus:
         qconnect(self._toggle_action.triggered, lambda: self._toggle_activated())
 
     def _setup_settings_action(self) -> None:
+        """Connect settings with a receiver retained for the action's lifetime."""
         # Keep the receiver alive for as long as the settings action can be triggered.
         qconnect(self._action_settings.triggered, lambda: self._on_open_settings())
 
     def _update_toggle_action(self) -> None:
+        """Synchronize the toggle with configuration, including changes made in settings."""
         self._toggle_action.setChecked(self._cfg.activated)
 
     def _on_open_settings(self) -> None:
+        """Open settings with the same configuration used by copying callbacks."""
         dialog = AutocopySettingsDialog(self._cfg, mw)
-        qconnect(dialog.accepted, self._update_toggle_action)
+        # Retain the controller until this dialog finishes, even if main-window ownership changes.
+        qconnect(dialog.accepted, lambda: self._update_toggle_action())
         dialog.exec()
 
     def _toggle_activated(self) -> None:
+        """Toggle copying and persist the updated configuration."""
         self._cfg.activated = not self._cfg.activated
         self._update_toggle_action()
         self._cfg.write_config()
 
     def setup(self) -> None:
+        """Add toggle and settings actions to the AJT menu."""
         self._root_menu.addAction(self._toggle_action)
         self._root_menu.addAction(self._action_settings)
 

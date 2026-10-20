@@ -9,6 +9,7 @@ from .config import AutoCopyConfig, get_global_config
 
 
 def is_anki_active() -> bool:
+    """Return whether Anki's main window or a registered dialog is active."""
     if mw.isActiveWindow():
         return True
     # noinspection PyProtectedMember

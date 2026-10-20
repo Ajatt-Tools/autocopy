@@ -87,6 +87,7 @@ class AutoCopy:
 
     def setup(self) -> None:
         """Register copying callbacks on Anki's event hooks."""
+        # Explicit captures defend callback lifetimes in addition to main-window ownership.
         gui_hooks.reviewer_did_show_question.append(lambda card: self.on_show_question(card))
         gui_hooks.reviewer_did_show_answer.append(lambda card: self.on_show_answer(card))
         gui_hooks.browser_did_change_row.append(lambda browser: self.on_select_note(browser))
