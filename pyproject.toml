@@ -60,7 +60,7 @@ format = "$(git rev-parse --show-toplevel)/scripts/format.sh"
 package = "$(git rev-parse --show-toplevel)/scripts/package.sh"
 
 [tool.coverage.run]
-source_pkgs = ["autocopy", "tests"]
+source_pkgs = ["autocopy", "playground", "tests"]
 branch = true
 parallel = true
 omit = [
@@ -69,6 +69,7 @@ omit = [
 
 [tool.coverage.paths]
 autocopy = ["autocopy", "*/autocopy/autocopy"]
+playground = ["playground", "*/autocopy/playground"]
 tests = ["tests", "*/autocopy/tests"]
 
 [tool.coverage.report]
