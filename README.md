@@ -11,6 +11,7 @@ This add-on can automatically copy text from a card to the clipboard.
 * When the card is selected in Browser.
 * When Reviewer shows the card's front side.
 * When Reviewer shows the card's answer side.
+* When Editor loads a note, if enabled in the options.
 
 **Use cases:**
 
