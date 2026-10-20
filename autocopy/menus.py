@@ -1,7 +1,6 @@
 # Copyright: Ajatt-Tools and contributors; https://github.com/Ajatt-Tools
 # License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 
-import functools
 from gettext import gettext as _
 
 from aqt import mw
@@ -20,14 +19,20 @@ class AutoCopyMenus:
         self._cfg = cfg
         self._root_menu = root_menu
         self._toggle_action = QAction(_(f"Activate {ADDON_NAME}"), root_menu)
-        self._toggle_action.setCheckable(True)
+        self._action_settings = QAction(_(f"{ADDON_NAME} Options..."), root_menu)
         self._setup_toggle_action()
+        self._setup_settings_action()
 
     def _setup_toggle_action(self) -> None:
+        self._toggle_action.setCheckable(True)
         self._update_toggle_action()
         # Qt does not retain plain Python bound-method receivers. Capture the owner explicitly
         # as a second lifetime safeguard alongside the main window's controller reference.
         qconnect(self._toggle_action.triggered, lambda: self._toggle_activated())
+
+    def _setup_settings_action(self) -> None:
+        # Keep the receiver alive for as long as the settings action can be triggered.
+        qconnect(self._action_settings.triggered, lambda: self._on_open_settings())
 
     def _update_toggle_action(self) -> None:
         self._toggle_action.setChecked(self._cfg.activated)
@@ -37,11 +42,6 @@ class AutoCopyMenus:
         qconnect(dialog.accepted, self._update_toggle_action)
         dialog.exec()
 
-    def _setup_settings_action(self, parent: QWidget) -> QAction:
-        action_settings = QAction(_(f"{ADDON_NAME} Options..."), parent)
-        qconnect(action_settings.triggered, self._on_open_settings)
-        return action_settings
-
     def _toggle_activated(self) -> None:
         self._cfg.activated = not self._cfg.activated
         self._update_toggle_action()
@@ -49,7 +49,7 @@ class AutoCopyMenus:
 
     def setup(self) -> None:
         self._root_menu.addAction(self._toggle_action)
-        self._root_menu.addAction(self._setup_settings_action(self._root_menu))
+        self._root_menu.addAction(self._action_settings)
 
 
 def init() -> None:
