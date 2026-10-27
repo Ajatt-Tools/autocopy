@@ -56,9 +56,10 @@ def anki_collection(tmp_path: pathlib.Path, monkeypatch: pytest.MonkeyPatch) -> 
         collection.close()
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture
 def clear_config_cache() -> Iterator[None]:
-    """Keep cached session configuration from leaking between tests."""
+    """Isolate tests of the real configuration accessor without resetting injected dependencies."""
+    # Ordinary controller tests inject fresh configuration and never populate this cache.
     config.get_global_config.cache_clear()
     yield
     config.get_global_config.cache_clear()

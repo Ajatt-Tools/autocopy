@@ -10,6 +10,7 @@ from autocopy.config import AutoCopyConfig
 from playground.no_anki_config import NoAnkiConfigView
 
 
+@pytest.mark.usefixtures("clear_config_cache")
 class TestGlobalConfig:
     """Verify lazy shared configuration and retry behavior after initialization failures."""
 
