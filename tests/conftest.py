@@ -3,6 +3,8 @@
 
 import os
 import pathlib
+import sys
+import traceback
 from collections.abc import Iterator
 
 import anki.lang
@@ -20,6 +22,22 @@ def pytest_collection_modifyitems(items: list[pytest.Item]) -> None:
     for item in items:
         if isinstance(item, pytest.Function):
             item.obj = beartype(item.obj)
+
+
+@pytest.fixture(autouse=True)
+def no_qt_callback_errors() -> Iterator[None]:
+    """Fail with full tracebacks when Qt reports an unhandled Python callback exception."""
+    errors: list[str] = []
+    # Keep our hook independent of test monkeypatch teardown and avoid retaining traceback frames.
+    with pytest.MonkeyPatch.context() as patch:
+        patch.setattr(
+            sys,
+            "excepthook",
+            lambda kind, error, tb: errors.append("".join(traceback.format_exception(kind, error, tb))),
+        )
+        yield
+        if errors:
+            pytest.fail("Unhandled Qt callback exceptions:\n" + "\n".join(errors), pytrace=False)
 
 
 @pytest.fixture(scope="session", autouse=True)
