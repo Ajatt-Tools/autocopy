@@ -5,7 +5,10 @@ try:
     # https://github.com/beartype/beartype
     from beartype.claw import beartype_this_package
 
-    beartype_this_package()
+    # Anki normally has no beartype. If installed, it rejects numeric package names such as '1995103628'.
+    # Skip the hook for those AnkiWeb directories, but keep it active for development imports.
+    if all(part.isidentifier() for part in __name__.split(".")):
+        beartype_this_package()
 except ImportError:
     print("Note: beartype is disabled in this session.")
 
