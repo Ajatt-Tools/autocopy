@@ -1,7 +1,7 @@
 name: CI
 
 on:
-  # Branch pushes run directly; release tags invoke these checks through workflow_call.
+  # Branch pushes and pull requests run these checks. Release tags have a separate workflow.
   push:
     # https://docs.github.com/en/actions/reference/workflows-and-actions/workflow-syntax#onpushbranchestagsbranches-ignoretags-ignore
     branches:
@@ -29,6 +29,14 @@ jobs:
 
       - name: Install Hatch
         run: pip install hatch
+
+      # Same format/lint split as the other migrated AJT add-ons.
+      # https://github.com/Ajatt-Tools/learn-now-button/blob/bc9723e73666bbf48ecf4c4d51c624359989f8db/pyproject.toml#L116-L142
+      - name: Check formatting
+        run: hatch check fmt
+
+      - name: Lint
+        run: hatch check code
 
       - name: Run tests
         run: hatch test -v

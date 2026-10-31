@@ -51,4 +51,6 @@ If no non-whitespace text remains, the clipboard is left unchanged.
 
 Run tests with `hatch test` or run the complete suite with coverage using `hatch test --cover`.
 For a focused run, use `hatch test tests/test_main.py`.
-Format code with `hatch fmt -f` and check shell scripts with `shellcheck scripts/*.sh`.
+Check formatting without changing files with `hatch check fmt`.
+Apply formatting fixes with `hatch check fmt --fix`.
+Lint Python code with `hatch check code` and check shell scripts with `shellcheck scripts/*.sh`.
